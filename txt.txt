@@ -1,0 +1,24 @@
+npx supabase login
+Hello from Supabase! Press Enter to open browser and login automatically.
+
+ npx supabase gen types --project-id arxwmrjizchdcliuxrzw
+
+npx supabase gen types --project-id arxwmrjizchdcliuxrzw > ./utils/supabase/database.types.ts
+
+import { createBrowserClient } from "@supabase/ssr";
+import { Database } from "./database.types";
+export const createClient = () => {
+    return createBrowserClient<Database>(
+        process.env.NEXT_PUBLIC_SUPERBASE_URL!,
+        process.env.NEXT_PUBLIC_SUPERBASE_PUBLISHABLE_KEY!
+
+    )
+}
+
+here you see the code above database you have you add this <Database> its a type of createBrowserType. 
+
+then see the post id, title and username 
+add a policy and save it 
+
+ npm i @supabase/supabase-js
+

@@ -1,0 +1,63 @@
+🧩 What is this file?
+
+This is a client-side React component in a Next.js app that:
+
+Shows a list of posts on the homepage.
+
+Uses React Query to fetch and cache the posts.
+
+Accepts preloaded data from the server (posts) as initialData.
+
+🔍 Step-by-Step Breakdown
+1. 'use client'
+
+This tells Next.js:
+
+“This component must run in the browser (not on the server).”
+
+Because you're using useQuery, which is a React hook — and hooks only run in the browser (or inside use client components).
+
+2. Props: ({ posts })
+
+This component receives posts as a prop — probably pre-fetched on the server.
+
+const HomePosts = ({ posts }: { posts: HomePostType }) => {
+
+
+posts is the initial data shown before fetching again.
+
+It's passed in from the parent layout or server-rendered page.
+
+3. useQuery — The Magic Part 🪄
+
+You're using React Query's useQuery() hook like this:
+
+const { data } = useQuery({
+  queryKey: ['homepost'],
+  queryFn: async () => {
+    const { data, error } = await getHomePosts()
+    if (error) throw error
+    return data
+  },
+  initialData: posts,
+  refetchOnMount: false,
+  staleTime: 10000
+})
+
+
+Let’s break this down in plain English:
+
+Option	Meaning
+queryKey: ['homepost']	Unique name for this query — helps with caching & identification
+queryFn	Function that actually fetches the posts from Supabase
+initialData: posts	Use the server-passed posts immediately — avoid showing a loading state
+refetchOnMount: false	Don’t refetch when the component mounts (only if needed later)
+staleTime: 10000	Consider data “fresh” for 10 seconds — don’t auto-refetch before that
+
+✅ This means:
+
+On first load, it shows the posts from the server.
+
+It won’t refetch unless you manually trigger it or wait 10+ seconds.
+
+It uses caching and avoids unnecessary network requests.
