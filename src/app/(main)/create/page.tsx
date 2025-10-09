@@ -15,7 +15,7 @@ const {register, handleSubmit, formState: {errors}}= useForm ({
     resolver: zodResolver(schemaWithImage)
 })
 
-  const { mutate,isPending, error: mutationError } = useMutation({
+  const { mutate, error: mutationError } = useMutation({
     mutationFn: CreatePost,
     onMutate:() => console.log('...CreatePost'),
     onSettled: () => console.log('Post is created')
@@ -62,10 +62,10 @@ const {register, handleSubmit, formState: {errors}}= useForm ({
         </h2>
  
         <form onSubmit={handleSubmit(values => {
-          let imageForm = undefined
-          if (values.image){
-          const imageForm = new FormData()
-          imageForm.append('image', values.image[0])
+          let imageForm = new FormData()
+
+          if (values.image?.length){
+             imageForm.append('image', values.image[0])
           }
           
 

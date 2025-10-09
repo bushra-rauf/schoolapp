@@ -6,10 +6,29 @@ import { revalidatePath } from "next/cache";
 
 import { slugify } from "@/utils/slugify";
 import { redirect } from "next/navigation";
+import { uploadImage } from "@/utils/supabase/upload-image";
 
 export const EditPost = async ({postId,usedata}: {postId: number, usedata: z.infer<typeof postSchema>}) => {
-    
+    console.log('image param', usedata.image, 'type', typeof usedata.image)
+
     const parasedData = postSchema.parse(usedata)
+    const imageFile = usedata.image?.get('image')
+    console.log('image file', imageFile, typeof imageFile )
+
+    let publicImageUrl;
+    if((typeof imageFile !== 'string') && imageFile !== undefined) {
+       if(!(imageFile instanceof File) && imageFile !== null) {
+           throw new Error('Malformed Image File')
+    }
+    publicImageUrl = await uploadImage(imageFile!)
+  }  else {
+    publicImageUrl = imageFile;
+  }
+    
+    
+    // const publicImageUrl = imageFile ? await uploadImage(imageFile) : null
+    
+     
     
     const supabase = await createClient()
     const {data: {user}} = await supabase.auth.getUser()
@@ -22,9 +41,13 @@ export const EditPost = async ({postId,usedata}: {postId: number, usedata: z.inf
 
     if(!user || user.id !== post?.user_id) throw new Error('Not Authorised')
       
-    const {data: updatedPost} =
+    const updatedPost = {
+      ...parasedData, slug: slugify(parasedData.title),
+      image: publicImageUrl ?? null   // ensure here its a string or null
+    }
+
     await supabase.from('posts')
-                  .update({...parasedData, slug: slugify(parasedData.title)}) 
+                  .update(updatedPost) 
                   .eq('id', postId)
                   .select('slug')
                   .single()

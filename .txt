@@ -1,1 +1,10 @@
 npm i zod (Iwebsite zod4)
+
+
+   const updatedPost = {
+       ...parasedData,
+  slug: slugify(parasedData.title),
+  image: publicImageUrl ?? null, // ensure it's a string or null
+    }
+    await supabase.from('posts')
+                  .update(updatedPost) 

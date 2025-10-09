@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 import { uploadImage } from "@/utils/supabase/upload-image";
 
 export const CreatePost = async (usedata: z.infer<typeof postSchema>) => {
-
+console.log('image parameter',typeof usedata.image)
     const parasedData = postSchema.parse(usedata)
     const supabase = await createClient();
     const {data: {user}} = await supabase.auth.getUser();
@@ -19,14 +19,14 @@ export const CreatePost = async (usedata: z.infer<typeof postSchema>) => {
     const slug = slugify(parasedData.title)
 
 const imageFile = usedata.image?.get('image')
-
+console.log('image file', imageFile)
 
 if(!(imageFile instanceof File) && imageFile !== null) {
     throw new Error('Malformed Image File')
 }
 
 
-const publicImageUrl = imageFile ? await uploadImage(imageFile): null
+const publicImageUrl = imageFile ? await uploadImage(imageFile) : null
 
     const userId = user.id;
 
