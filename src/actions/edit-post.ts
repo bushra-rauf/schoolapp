@@ -41,13 +41,13 @@ export const EditPost = async ({postId,usedata}: {postId: number, usedata: z.inf
 
     if(!user || user.id !== post?.user_id) throw new Error('Not Authorised')
       
-    const updatedPost = {
-      ...parasedData, slug: slugify(parasedData.title),
-      image: publicImageUrl ?? null   // ensure here its a string or null
-    }
-
-    await supabase.from('posts')
-                  .update(updatedPost) 
+    
+      // ...parasedData, slug: slugify(parasedData.title),
+      // image: publicImageUrl ?? null   // ensure here its a string or null
+    
+    
+ const {data:updatedPost} =   await supabase.from('posts')
+                  .update({ ...parasedData, image: publicImageUrl, slug: slugify(parasedData.title)}) 
                   .eq('id', postId)
                   .select('slug')
                   .single()
